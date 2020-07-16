@@ -19,7 +19,7 @@ func AuthMiddleware() gin.HandlerFunc {
 				"code": "401",
 				"msg":  "权限不足",
 			})
-			ctx.Abort()
+			ctx.Abort() //阻止调用中间件后续的函数
 			return
 		}
 
@@ -31,7 +31,7 @@ func AuthMiddleware() gin.HandlerFunc {
 				"code": 401,
 				"msg":  "权限不足",
 			})
-			ctx.Abort()
+			ctx.Abort() //阻止调用中间件后续的函数
 			return
 		}
 
@@ -47,13 +47,12 @@ func AuthMiddleware() gin.HandlerFunc {
 				"code": 401,
 				"msg":  "权限不足",
 			})
-			ctx.Abort()
+			ctx.Abort() //阻止调用中间件后续的函数
 			return
 		}
 
-		//用户存在 将user的信息写入上下文
-		ctx.Set("user", user)
+		ctx.Set("user", user) //用户存在 将user的信息写入上下文
 
-		ctx.Next()
+		ctx.Next() //验证通过，执行之后函数
 	}
 }

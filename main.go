@@ -1,8 +1,8 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
 	"os"
 	"study-gin-gorm/common"
@@ -11,6 +11,7 @@ import (
 func main() {
 	InitConfig()
 	db := common.InitDB()
+	//做完错误检查之后，确保db不为nil，所以要加在err判断之后
 	defer db.Close()
 
 	r := gin.Default()
@@ -29,7 +30,6 @@ func InitConfig() {
 	viper.AddConfigPath(workDir + "/config")
 	err := viper.ReadInConfig()
 	if err != nil {
-
+		fmt.Println(err)
 	}
-
 }
