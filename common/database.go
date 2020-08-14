@@ -2,17 +2,18 @@ package common
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/spf13/viper"
 	"net/url"
 	"study-gin-gorm/model"
+
+	"github.com/spf13/viper"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
 
 func InitDB() *gorm.DB {
-	driverName := viper.GetString("datasource.driverName")
+	//driverName := viper.GetString("datasource.driverName")
 	host := viper.GetString("datasource.host")
 	port := viper.GetString("datasource.port")
 	database := viper.GetString("datasource.database")
@@ -29,12 +30,14 @@ func InitDB() *gorm.DB {
 		charset,
 		url.QueryEscape(loc))
 
-	db, err := gorm.Open(driverName, args)
+	db, err := gorm.Open(mysql.Open(args), &gorm.Config{
+		DisableForeignKeyConstraintWhenMigrating: true,
+	})
 	if err != nil {
 		panic("连接数据库失败，错误信息：" + err.Error())
 	}
 
-	//自动创建user表
+	//自动迁移 创建users表
 	db.AutoMigrate(&model.User{})
 	DB = db
 	return db

@@ -1,11 +1,12 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
 	"study-gin-gorm/common"
 	"study-gin-gorm/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -35,11 +36,11 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		//验证通过后获取claim中的userId
-		userId := claims.UserId
+		//验证通过后获取claim中的userID
+		userID := claims.UserID
 		DB := common.GetDB()
 		var user model.User
-		DB.First(&user, userId)
+		DB.First(&user, userID)
 
 		//用户
 		if user.ID == 0 {

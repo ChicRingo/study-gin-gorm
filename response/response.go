@@ -1,16 +1,18 @@
 package response
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-//
-//{
-//code:20001
-//data:xxx,
-//msg:xx
-//}
+/*
+{
+	code:20001
+	data:xxx,
+	msg:xx
+}
+*/
 
 func Response(ctx *gin.Context, httpStatus int, code int, data gin.H, msg string) {
 	ctx.JSON(httpStatus, gin.H{

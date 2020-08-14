@@ -1,13 +1,14 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
 	"log"
 	"strconv"
 	"study-gin-gorm/model"
 	"study-gin-gorm/repository"
 	"study-gin-gorm/response"
 	"study-gin-gorm/vo"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ICategoryController interface {
@@ -19,10 +20,10 @@ type CategoryController struct {
 }
 
 func NewCategoryController() ICategoryController {
-	repository := repository.NewCategoryRepository()
-	repository.DB.AutoMigrate(model.Category{})
+	categoryRepository := repository.NewCategoryRepository()
+	_ = categoryRepository.DB.AutoMigrate(model.Category{})
 
-	return CategoryController{Repository: repository}
+	return CategoryController{Repository: categoryRepository}
 }
 
 func (c CategoryController) Create(ctx *gin.Context) {
@@ -51,9 +52,9 @@ func (c CategoryController) Update(ctx *gin.Context) {
 	}
 
 	// 获取path 中的参数
-	categoryId, _ := strconv.Atoi(ctx.Params.ByName("id"))
+	categoryID, _ := strconv.Atoi(ctx.Params.ByName("id"))
 
-	updateCategory, err := c.Repository.SelectById(categoryId)
+	updateCategory, err := c.Repository.SelectByID(categoryID)
 	if err != nil {
 		response.Fail(ctx, nil, "分类不存在")
 		return
@@ -73,9 +74,9 @@ func (c CategoryController) Update(ctx *gin.Context) {
 
 func (c CategoryController) Show(ctx *gin.Context) {
 	// 获取path 中的参数
-	categoryId, _ := strconv.Atoi(ctx.Params.ByName("id"))
+	categoryID, _ := strconv.Atoi(ctx.Params.ByName("id"))
 
-	category, err := c.Repository.SelectById(categoryId)
+	category, err := c.Repository.SelectByID(categoryID)
 	if err != nil {
 		response.Fail(ctx, nil, "分类不存在")
 		return
@@ -86,9 +87,9 @@ func (c CategoryController) Show(ctx *gin.Context) {
 
 func (c CategoryController) Delete(ctx *gin.Context) {
 	// 获取path 中的参数
-	categoryId, _ := strconv.Atoi(ctx.Params.ByName("id"))
+	categoryID, _ := strconv.Atoi(ctx.Params.ByName("id"))
 
-	if err := c.Repository.DeleteById(categoryId); err != nil {
+	if err := c.Repository.DeleteByID(categoryID); err != nil {
 		response.Fail(ctx, nil, "删除失败，请重试")
 		return
 	}

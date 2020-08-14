@@ -1,14 +1,15 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"log"
 	"strconv"
 	"study-gin-gorm/common"
 	"study-gin-gorm/model"
 	"study-gin-gorm/response"
 	"study-gin-gorm/vo"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type IPostController interface {
@@ -37,7 +38,7 @@ func (p PostController) PageList(ctx *gin.Context) {
 	p.DB.Preload("Category").Order("created_at desc").Offset((pageNum - 1) * pageSize).Limit(pageSize).Find(&posts)
 
 	// 前端渲染分页需要知道总数
-	var total int
+	var total int64
 	p.DB.Model(model.Post{}).Count(&total)
 
 	response.Success(ctx, gin.H{"data": posts, "total": total}, "成功")
@@ -60,8 +61,8 @@ func (p PostController) Create(ctx *gin.Context) {
 
 	// 创建文章 post
 	post := model.Post{
-		UserId:     user.(model.User).ID,
-		CategoryId: requestPost.CategoryId,
+		UserID:     user.(model.User).ID,
+		CategoryID: requestPost.CategoryID,
 		Title:      requestPost.Title,
 		HeadImg:    requestPost.HeadImg,
 		Content:    requestPost.Content,
@@ -86,10 +87,10 @@ func (p PostController) Update(ctx *gin.Context) {
 	}
 
 	// 获取path 中的参数
-	postId := ctx.Params.ByName("id")
+	postID := ctx.Params.ByName("id")
 
 	var post model.Post
-	if p.DB.Where("id = ?", postId).First(&post).RecordNotFound() {
+	if p.DB.Where("id = ?", postID).First(&post).RowsAffected == 0 {
 		response.Fail(ctx, nil, "文章不存在")
 		return
 	}
@@ -97,14 +98,14 @@ func (p PostController) Update(ctx *gin.Context) {
 	// 判断当前用户是否为文章的作者
 	// 获取登录用户 user
 	user, _ := ctx.Get("user")
-	userId := user.(model.User).ID
-	if userId != post.UserId {
+	userID := user.(model.User).ID
+	if userID != post.UserID {
 		response.Fail(ctx, nil, "文章不属于您，请勿非法操作")
 		return
 	}
 
 	// 更新文章
-	if err := p.DB.Model(&post).Update(requestPost).Error; err != nil {
+	if err := p.DB.Model(&post).Updates(requestPost).Error; err != nil {
 		response.Fail(ctx, nil, "更新失败")
 		return
 	}
@@ -113,10 +114,10 @@ func (p PostController) Update(ctx *gin.Context) {
 
 func (p PostController) Show(ctx *gin.Context) {
 	// 获取path 中的参数
-	postId := ctx.Params.ByName("id")
+	postID := ctx.Params.ByName("id")
 
 	var post model.Post
-	if p.DB.Preload("Category").Where("id = ?", postId).First(&post).RecordNotFound() {
+	if p.DB.Preload("Category").Where("id = ?", postID).First(&post).RowsAffected == 0 {
 		response.Fail(ctx, nil, "文章不存在")
 		return
 	}
@@ -126,10 +127,10 @@ func (p PostController) Show(ctx *gin.Context) {
 
 func (p PostController) Delete(ctx *gin.Context) {
 	// 获取path 中的参数
-	postId := ctx.Params.ByName("id")
+	postID := ctx.Params.ByName("id")
 
 	var post model.Post
-	if p.DB.Where("id = ?", postId).First(&post).RecordNotFound() {
+	if p.DB.Where("id = ?", postID).First(&post).RowsAffected == 0 {
 		response.Fail(ctx, nil, "删除失败,文章不存在")
 		return
 	}
@@ -137,8 +138,8 @@ func (p PostController) Delete(ctx *gin.Context) {
 	// 判断当前用户是否为文章的作者
 	// 获取登录用户 user
 	user, _ := ctx.Get("user")
-	userId := user.(model.User).ID
-	if userId != post.UserId {
+	userID := user.(model.User).ID
+	if userID != post.UserID {
 		response.Fail(ctx, nil, "文章不属于您，请勿非法操作")
 		return
 	}

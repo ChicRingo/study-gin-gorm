@@ -1,9 +1,10 @@
 package repository
 
 import (
-	"github.com/jinzhu/gorm"
 	"study-gin-gorm/common"
 	"study-gin-gorm/model"
+
+	"gorm.io/gorm"
 )
 
 type CategoryRepository struct {
@@ -34,7 +35,7 @@ func (c CategoryRepository) Update(category model.Category, name string) (*model
 	return &category, nil
 }
 
-func (c CategoryRepository) SelectById(id int) (*model.Category, error) {
+func (c CategoryRepository) SelectByID(id int) (*model.Category, error) {
 	var category model.Category
 	if err := c.DB.First(&category, id).Error; err != nil {
 		return nil, err
@@ -43,14 +44,10 @@ func (c CategoryRepository) SelectById(id int) (*model.Category, error) {
 	return &category, nil
 }
 
-func (c CategoryRepository) DeleteById(id int) error {
+func (c CategoryRepository) DeleteByID(id int) error {
 	if err := c.DB.Delete(model.Category{}, id).Error; err != nil {
 		return err
 	}
-	//var category model.Category
-	//if err := c.DB.Delete(&category, id).Error; err != nil {
-	//	return err
-	//}
 
 	return nil
 }

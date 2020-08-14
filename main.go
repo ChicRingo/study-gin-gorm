@@ -2,17 +2,19 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"os"
 	"study-gin-gorm/common"
+
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 func main() {
 	InitConfig()
 	db := common.InitDB()
 	//做完错误检查之后，确保db不为nil，所以要加在err判断之后
-	defer db.Close()
+	mysqlDB, _ := db.DB()
+	defer mysqlDB.Close()
 
 	r := gin.Default()
 	r = CollectRoute(r)

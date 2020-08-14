@@ -1,15 +1,16 @@
 package common
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"study-gin-gorm/model"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 var jwtKey = []byte("a_secret_crect")
 
 type Clamis struct {
-	UserId uint
+	UserID uint
 	jwt.StandardClaims
 }
 
@@ -17,7 +18,7 @@ func ReleaseToken(user model.User) (string, error) {
 	//有效时间
 	expirationTime := time.Now().Add(7 * 24 * time.Hour)
 	claims := &Clamis{
-		UserId: user.ID,
+		UserID: user.ID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 			IssuedAt:  time.Now().Unix(),

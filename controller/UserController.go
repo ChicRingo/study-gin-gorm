@@ -1,9 +1,6 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
-	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
 	"study-gin-gorm/common"
@@ -11,6 +8,10 @@ import (
 	"study-gin-gorm/model"
 	"study-gin-gorm/response"
 	"study-gin-gorm/util"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 //注册
