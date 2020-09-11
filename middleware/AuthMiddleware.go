@@ -3,8 +3,9 @@ package middleware
 import (
 	"net/http"
 	"strings"
-	"study-gin-gorm/common"
+	"study-gin-gorm/dao/mysql"
 	"study-gin-gorm/model"
+	"study-gin-gorm/pkg/jwt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,7 +27,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		tokenString = tokenString[7:]
 
-		token, claims, err := common.ParseToken(tokenString)
+		token, claims, err := jwt.ParseToken(tokenString)
 		if err != nil || !token.Valid {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"code": 401,
@@ -38,9 +39,9 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		//验证通过后获取claim中的userID
 		userID := claims.UserID
-		DB := common.GetDB()
+		db := mysql.GetDB()
 		var user model.User
-		DB.First(&user, userID)
+		db.First(&user, userID)
 
 		//用户
 		if user.ID == 0 {

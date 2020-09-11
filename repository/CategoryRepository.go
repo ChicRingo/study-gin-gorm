@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"study-gin-gorm/common"
+	"study-gin-gorm/dao/mysql"
 	"study-gin-gorm/model"
 
 	"gorm.io/gorm"
@@ -12,7 +12,7 @@ type CategoryRepository struct {
 }
 
 func NewCategoryRepository() CategoryRepository {
-	return CategoryRepository{DB: common.GetDB()}
+	return CategoryRepository{DB: mysql.GetDB()}
 }
 
 func (c CategoryRepository) Create(name string) (*model.Category, error) {

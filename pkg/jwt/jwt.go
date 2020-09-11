@@ -1,4 +1,4 @@
-package common
+package jwt
 
 import (
 	"study-gin-gorm/model"
@@ -9,7 +9,7 @@ import (
 
 var jwtKey = []byte("a_secret_crect")
 
-type Clamis struct {
+type Claims struct {
 	UserID uint
 	jwt.StandardClaims
 }
@@ -17,16 +17,19 @@ type Clamis struct {
 func ReleaseToken(user model.User) (string, error) {
 	//有效时间
 	expirationTime := time.Now().Add(7 * 24 * time.Hour)
-	claims := &Clamis{
-		UserID: user.ID,
+
+	// 创建一个自定义的声明数据
+	claims := &Claims{
+		UserID: user.ID, // 自定义字段
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
+			ExpiresAt: expirationTime.Unix(), // 过期时间
 			IssuedAt:  time.Now().Unix(),
-			Issuer:    "demo.studygin",
+			Issuer:    "study_gin_demo", // 签发人
 			Subject:   "user token",
 		},
 	}
 
+	// 使用指定的签名方法创建签名对象
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(jwtKey)
 
@@ -37,10 +40,10 @@ func ReleaseToken(user model.User) (string, error) {
 	return tokenString, nil
 }
 
-func ParseToken(tokenString string) (*jwt.Token, *Clamis, error) {
-	clamis := &Clamis{}
-	token, err := jwt.ParseWithClaims(tokenString, clamis, func(token *jwt.Token) (interface{}, error) {
+func ParseToken(tokenString string) (*jwt.Token, *Claims, error) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
-	return token, clamis, err
+	return token, claims, err
 }

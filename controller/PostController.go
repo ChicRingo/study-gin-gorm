@@ -3,7 +3,7 @@ package controller
 import (
 	"log"
 	"strconv"
-	"study-gin-gorm/common"
+	"study-gin-gorm/dao/mysql"
 	"study-gin-gorm/model"
 	"study-gin-gorm/requestParam"
 	"study-gin-gorm/response"
@@ -22,7 +22,7 @@ type PostController struct {
 }
 
 func NewPostController() IPostController {
-	db := common.GetDB()
+	db := mysql.GetDB()
 	db.AutoMigrate(model.Post{})
 
 	return PostController{DB: db}

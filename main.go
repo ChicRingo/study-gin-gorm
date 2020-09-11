@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"study-gin-gorm/common"
 	"study-gin-gorm/config"
+	"study-gin-gorm/dao/mysql"
 	"study-gin-gorm/router"
 
 	"github.com/spf13/viper"
@@ -17,11 +17,11 @@ func main() {
 	}
 
 	// 3.初始化MySQL
-	if err := common.Init(config.Conf.MySQLConfig); err != nil {
+	if err := mysql.Init(config.Conf.MySQLConfig); err != nil {
 		fmt.Printf("init mysql failed, err:%v\n", err)
 		return
 	}
-	defer common.Close()
+	defer mysql.Close()
 
 	//// 注册gin框架内置的校验器翻译
 	//if err := controller.InitTrans("zh"); err != nil {

@@ -3,11 +3,12 @@ package controller
 import (
 	"log"
 	"net/http"
-	"study-gin-gorm/common"
+	"study-gin-gorm/dao/mysql"
 	"study-gin-gorm/dto"
 	"study-gin-gorm/model"
+	"study-gin-gorm/pkg/jwt"
+	"study-gin-gorm/pkg/util"
 	"study-gin-gorm/response"
-	"study-gin-gorm/util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -17,7 +18,7 @@ import (
 
 //注册
 func Register(ctx *gin.Context) {
-	DB := common.GetDB()
+	db := mysql.GetDB()
 	// 使用map 获取请求的参数
 	//var requestMap =  make(map[string]string)
 	//json.NewDecoder(ctx.Request.Body).Decode(&requestMap)
@@ -64,7 +65,7 @@ func Register(ctx *gin.Context) {
 	log.Println(name, telephone, password)
 
 	//判断手机号是否存在
-	if isTelephoneExist(DB, telephone) {
+	if isTelephoneExist(db, telephone) {
 		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "用户已经存在")
 		return
 	}
@@ -80,10 +81,10 @@ func Register(ctx *gin.Context) {
 		Telephone: telephone,
 		Password:  string(hasedPassword),
 	}
-	DB.Create(&newUser)
+	db.Create(&newUser)
 
 	//发放token
-	token, err := common.ReleaseToken(newUser)
+	token, err := jwt.ReleaseToken(newUser)
 	if err != nil {
 		response.Response(ctx, http.StatusInternalServerError, 500, nil, "系统异常")
 		//ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -100,7 +101,7 @@ func Register(ctx *gin.Context) {
 
 //登录
 func Login(ctx *gin.Context) {
-	DB := common.GetDB()
+	db := mysql.GetDB()
 	//gin框架Bind函数
 	var requestUser = model.User{}
 	ctx.ShouldBindJSON(&requestUser)
@@ -121,7 +122,7 @@ func Login(ctx *gin.Context) {
 
 	//判断手机号是否存在
 	var user model.User
-	DB.Where("telephone = ?", telephone).First(&user)
+	db.Where("telephone = ?", telephone).First(&user)
 	if user.ID == 0 {
 		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "用户不存在")
 		//ctx.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -142,7 +143,7 @@ func Login(ctx *gin.Context) {
 	}
 
 	//发放token
-	token, err := common.ReleaseToken(user)
+	token, err := jwt.ReleaseToken(user)
 	if err != nil {
 		response.Response(ctx, http.StatusInternalServerError, 500, nil, "系统异常")
 		//ctx.JSON(http.StatusInternalServerError, gin.H{

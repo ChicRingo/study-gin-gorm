@@ -33,7 +33,7 @@ func (c CategoryController) Create(ctx *gin.Context) {
 	var requestCategory requestParam.CreateCategoryRequest
 	if err := ctx.ShouldBind(&requestCategory); err != nil {
 		log.Println(err.Error())
-		response.Fail(ctx, nil, "数据验证错误，分类名称必填")
+		response.Fail(ctx, nil, "数据验证错误，分类名称必填"+err.Error())
 		return
 	}
 
