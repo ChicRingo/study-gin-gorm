@@ -16,7 +16,11 @@ func main() {
 		return
 	}
 
-	common.Init()
+	// 3.初始化MySQL
+	if err := common.Init(config.Conf.MySQLConfig); err != nil {
+		fmt.Printf("init mysql failed, err:%v\n", err)
+		return
+	}
 	defer common.Close()
 
 	//// 注册gin框架内置的校验器翻译

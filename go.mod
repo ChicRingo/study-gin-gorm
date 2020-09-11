@@ -11,6 +11,7 @@ require (
 	github.com/go-playground/validator/v10 v10.3.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/viper v1.7.1
+	go.uber.org/zap v1.10.0
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
 	gorm.io/driver/mysql v1.0.1
 	gorm.io/gorm v1.20.1
