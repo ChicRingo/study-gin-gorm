@@ -12,7 +12,7 @@ import (
 
 var DB *gorm.DB
 
-func Init() *gorm.DB {
+func Init() {
 	args := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=%s&parseTime=true&loc=%s",
 		config.Conf.MySQLConfig.Username,
 		config.Conf.MySQLConfig.Password,
@@ -33,7 +33,6 @@ func Init() *gorm.DB {
 	//自动迁移 创建users表
 	_ = db.AutoMigrate(&model.User{})
 	DB = db
-	return db
 }
 
 func GetDB() *gorm.DB {
@@ -42,5 +41,5 @@ func GetDB() *gorm.DB {
 
 func Close() {
 	mysqlDB, _ := DB.DB()
-	mysqlDB.Close()
+	_ = mysqlDB.Close()
 }
