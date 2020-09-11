@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AuthMiddleware() gin.HandlerFunc {
+func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		//获取authorization header
 		tokenString := ctx.GetHeader("Authorization")
@@ -27,8 +27,8 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		tokenString = tokenString[7:]
 
-		token, claims, err := jwt.ParseToken(tokenString)
-		if err != nil || !token.Valid {
+		claims, err := jwt.ParseToken(tokenString)
+		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"code": 401,
 				"msg":  "权限不足",

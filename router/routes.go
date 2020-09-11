@@ -17,7 +17,7 @@ func SetupRouter() *gin.Engine {
 	// 注册路由：用户注册、登录、用户信息
 	r.POST("/api/auth/register", controller.Register)
 	r.POST("/api/auth/login", controller.Login)
-	r.GET("/api/auth/info", middleware.AuthMiddleware(), controller.Info)
+	r.GET("/api/auth/info", middleware.JWTAuthMiddleware(), controller.Info)
 
 	// 注册路由组：分类
 	categoryRouter := r.Group("/categories")
@@ -31,7 +31,7 @@ func SetupRouter() *gin.Engine {
 
 	// 注册路由组：帖子
 	postRouter := r.Group("/posts")
-	postRouter.Use(middleware.AuthMiddleware())
+	postRouter.Use(middleware.JWTAuthMiddleware())
 	{
 		postController := controller.NewPostController()
 		postRouter.POST("", postController.Create)
