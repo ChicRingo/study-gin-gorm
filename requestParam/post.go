@@ -1,4 +1,4 @@
-package vo
+package requestParam
 
 type CreatePostRequest struct {
 	CategoryID uint   `json:"category_id" binding:"required"`

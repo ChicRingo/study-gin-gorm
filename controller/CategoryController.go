@@ -1,12 +1,13 @@
 package controller
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"study-gin-gorm/model"
 	"study-gin-gorm/repository"
+	"study-gin-gorm/requestParam"
 	"study-gin-gorm/response"
-	"study-gin-gorm/vo"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,13 +22,15 @@ type CategoryController struct {
 
 func NewCategoryController() ICategoryController {
 	categoryRepository := repository.NewCategoryRepository()
-	_ = categoryRepository.DB.AutoMigrate(model.Category{})
-
+	err := categoryRepository.DB.AutoMigrate(model.Category{})
+	if err != nil {
+		fmt.Println(err)
+	}
 	return CategoryController{Repository: categoryRepository}
 }
 
 func (c CategoryController) Create(ctx *gin.Context) {
-	var requestCategory vo.CreateCategoryRequest
+	var requestCategory requestParam.CreateCategoryRequest
 	if err := ctx.ShouldBind(&requestCategory); err != nil {
 		log.Println(err.Error())
 		response.Fail(ctx, nil, "数据验证错误，分类名称必填")
@@ -45,7 +48,7 @@ func (c CategoryController) Create(ctx *gin.Context) {
 
 func (c CategoryController) Update(ctx *gin.Context) {
 	// 绑定body 中的参数
-	var requestCategory vo.CreateCategoryRequest
+	var requestCategory requestParam.CreateCategoryRequest
 	if err := ctx.ShouldBind(&requestCategory); err != nil {
 		response.Fail(ctx, nil, "数据验证错误，分类名称必填")
 		return

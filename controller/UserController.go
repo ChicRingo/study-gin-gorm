@@ -10,6 +10,7 @@ import (
 	"study-gin-gorm/util"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -27,7 +28,17 @@ func Register(ctx *gin.Context) {
 
 	//gin框架Bind函数
 	var requestUser = model.User{}
-	ctx.Bind(&requestUser)
+	if err := ctx.ShouldBindJSON(&requestUser); err != nil {
+		// 请求参数有误，直接返回响应
+
+		errs, ok := err.(validator.ValidationErrors)
+		if !ok {
+			response.Fail(ctx, nil, "参数校验错误，请重试")
+			return
+		}
+		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, errs.Error())
+		return
+	}
 
 	//获取参数
 	//name := ctx.PostForm("name")
@@ -37,11 +48,11 @@ func Register(ctx *gin.Context) {
 	telephone := requestUser.Telephone
 	password := requestUser.Password
 
-	//数据验证
-	if len(telephone) != 11 {
-		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "手机号必须为11位")
-		return
-	}
+	////数据验证
+	//if len(telephone) != 11 {
+	//	response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "手机号必须为11位")
+	//	return
+	//}
 	if len(password) < 6 {
 		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "密码不能少于6位")
 		return
@@ -92,7 +103,7 @@ func Login(ctx *gin.Context) {
 	DB := common.GetDB()
 	//gin框架Bind函数
 	var requestUser = model.User{}
-	ctx.Bind(&requestUser)
+	ctx.ShouldBindJSON(&requestUser)
 
 	//获取参数
 	telephone := requestUser.Telephone
@@ -147,7 +158,7 @@ func Login(ctx *gin.Context) {
 
 func Info(ctx *gin.Context) {
 	user, _ := ctx.Get("user")
-	//response.Success(ctx, gin.H{"user": dto.ToUserDto(user.(model.User))}, "")
+	response.Success(ctx, gin.H{"user": dto.ToUserDto(user.(model.User))}, "")
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"data": gin.H{

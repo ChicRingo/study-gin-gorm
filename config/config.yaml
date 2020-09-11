@@ -1,0 +1,25 @@
+server:
+  name: study_gin_gorm
+  mode: dev
+  port: 1016
+  version: 0.0.2
+  start_time: "2020-07-01"
+  machine_id: 1
+auth:
+  jwt_expire: 8760
+log:
+  level: "debug"
+  filename: "study_gin_gorm.log"
+  max_size: 200
+  max_age: 30
+  max_backups: 7
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: root
+  database: study_gin_gorm
+  charset: utf8mb4
+  loc: Asia/Shanghai
+  max_open_conns: 200
+  max_idle_conns: 50

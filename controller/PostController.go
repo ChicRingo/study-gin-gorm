@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"study-gin-gorm/common"
 	"study-gin-gorm/model"
+	"study-gin-gorm/requestParam"
 	"study-gin-gorm/response"
-	"study-gin-gorm/vo"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -47,7 +47,7 @@ func (p PostController) PageList(ctx *gin.Context) {
 
 func (p PostController) Create(ctx *gin.Context) {
 	// 绑定body 中的参数
-	var requestPost vo.CreatePostRequest
+	var requestPost requestParam.CreatePostRequest
 
 	// 数据验证
 	if err := ctx.ShouldBind(&requestPost); err != nil {
@@ -78,7 +78,7 @@ func (p PostController) Create(ctx *gin.Context) {
 
 func (p PostController) Update(ctx *gin.Context) {
 	// 绑定body 中的参数
-	var requestPost vo.CreatePostRequest
+	var requestPost requestParam.CreatePostRequest
 
 	// 数据验证
 	if err := ctx.ShouldBind(&requestPost); err != nil {
