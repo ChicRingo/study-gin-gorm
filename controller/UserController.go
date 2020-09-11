@@ -87,10 +87,6 @@ func Register(ctx *gin.Context) {
 	token, err := jwt.ReleaseToken(newUser)
 	if err != nil {
 		response.Response(ctx, http.StatusInternalServerError, 500, nil, "系统异常")
-		//ctx.JSON(http.StatusInternalServerError, gin.H{
-		//	"code": 500,
-		//	"msg":  "系统异常",
-		//})
 		log.Printf("token生成异常，错误信息：%v", err)
 		return
 	}
